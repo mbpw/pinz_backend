@@ -26,7 +26,7 @@ SECRET_KEY = '%4r%zfsk+w0j^v8perij&3yzgspu-rkwoonc*$v+wq-@nmb_4d'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.1.103', '192.168.1.104', '89.231.107.250', 'dzielnica.sytes.net']
 
 
 # Application definition
