@@ -6,3 +6,7 @@ class DzielnicaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dzielnica
         fields = ('gid','name')
+
+class LoginSerializer(serializers.ModelSerializer):
+
+    pass
