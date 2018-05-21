@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
+
 from projekt.models import User
 from projekt.models import Dzielnica
 from projekt.models import Zgloszenie
@@ -43,8 +45,9 @@ class LoginSerializer(serializers.ModelSerializer):
     pass
 
 
-class ZgloszenieSerializer(serializers.ModelSerializer):
+class ZgloszenieSerializer(GeoFeatureModelSerializer):
 
     class Meta:
         model = Zgloszenie
+        geo_field = "geometry"
         fields = ('__all__')

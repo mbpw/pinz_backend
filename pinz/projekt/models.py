@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-
+import os
 from django.contrib.gis.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.gis.geos import Point
@@ -40,15 +40,32 @@ class Dzielnica(models.Model):
     def __unicode__(self):
         return 0
 
+def get_image_folder_zgl(instance, filename):
+    path = "media/images/zgloszenia/"
+    print(filename)
+    ext = str(os.path.splitext(filename)[1])
+    files = str(instance.id) + ext
+    return os.path.join(path, files)
+
+def validate_file_extension(value):
+    import os
+    from django.core.exceptions import ValidationError
+    ext = os.path.splitext(value.name)[1]  # [0] returns path+filename
+    valid_extensions = ['.jpeg', '.jpg', '.png']
+    if not ext.lower() in valid_extensions:
+        raise ValidationError(u'Unsupported file extension.')
+
+
 class Zgloszenie(models.Model):
     id = models.AutoField(primary_key=True)
     type = models.ForeignKey(to='Type', on_delete=models.PROTECT)
     geometry = models.PointField(srid=4326, default=Point(21.010725, 52.220428))
-    img = models.FileField()
+    img = models.FileField(upload_to=get_image_folder_zgl, validators=[validate_file_extension])
 
     class Meta:
         verbose_name = "Zgłoszenie"
         verbose_name_plural = "Zgłoszenia"
+
 
 class Type(models.Model):
     id = models.AutoField(primary_key=True)

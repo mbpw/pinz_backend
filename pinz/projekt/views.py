@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from .models import Dzielnica
 from .models import Zgloszenie
 from .api.serializers import DzielnicaSerializer
+from .api.serializers import ZgloszenieSerializer
 
 from django.core.serializers import serialize
 
@@ -25,11 +26,11 @@ class DzielniceList(APIView):
 class ZgloszeniaList(APIView):
 
     def get(self, request):
-        #zgloszenia = Zgloszenie.objects.all()
-        #serializer = ZgloszenieSerializer(zgloszenia, many=True)
-        #return Response(serializer.data)
-        data = serialize('geojson', Zgloszenie.objects.all(), geometry_field='geometry')
-        return Response(data)
+        zgloszenia = Zgloszenie.objects.all()
+        serializer = ZgloszenieSerializer(zgloszenia, many=True)
+        return Response(serializer.data)
+        #data = serialize('geojson', Zgloszenie.objects.all(), geometry_field='geometry')
+        #return Response(data)
 
     def post(self):
         pass
