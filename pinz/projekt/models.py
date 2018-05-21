@@ -2,13 +2,18 @@
 from __future__ import unicode_literals
 
 
-from django.db import models
 from django.contrib.gis.db import models
-from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
 from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import Polygon
 
 # Create your models here.
+
+warszawaPolygon = Polygon(((21.170654296875, 52.07275365395317),
+                          (21.170654296875, 52.34624647178617),
+                          (20.820465087890625, 52.34624647178617),
+                          (20.820465087890625, 52.07275365395317),
+                          (21.170654296875, 52.07275365395317)))
 
 class User(AbstractUser):
     # email = models.CharField(max_length=100)
@@ -16,6 +21,7 @@ class User(AbstractUser):
     #
     # REQUIRED_FIELDS = ['email']
     # EMAIL_FIELD = 'email'
+    img = models.FileField()
 
     class Meta:
         verbose_name = "Użytkownik"
@@ -25,7 +31,7 @@ class Dzielnica(models.Model):
     gid = models.AutoField(primary_key=True)
     teryt = models.CharField(max_length=50)
     name = models.CharField(max_length=50)
-    geometry = models.PolygonField(srid=2180)
+    geometry = models.PolygonField(srid=4326)
 
     class Meta:
         verbose_name = "Dzielnica"
@@ -36,8 +42,9 @@ class Dzielnica(models.Model):
 
 class Zgloszenie(models.Model):
     id = models.AutoField(primary_key=True)
-    category = models.ForeignKey(to='Type', on_delete=models.PROTECT)
-    geometry = models.PointField(srid=2180, default=Point(660000, 432903))
+    type = models.ForeignKey(to='Type', on_delete=models.PROTECT)
+    geometry = models.PointField(srid=4326, default=Point(21.010725, 52.220428))
+    img = models.FileField()
 
     class Meta:
         verbose_name = "Zgłoszenie"
@@ -73,15 +80,3 @@ class Category(models.Model):
 
     def __unicode__(self):
         return str(self.catName)
-
-# class User(models.Model):
-#     id = models.AutoField(primary_key=True)
-#     name = models.CharField(max_length=100)
-#     password = models.CharField(max_length=32)
-#
-#     class Meta:
-#         verbose_name = "Użytkownik"
-#         verbose_name_plural = "Użytkownicy"
-#
-#     def __unicode__(self):
-#         return 0
