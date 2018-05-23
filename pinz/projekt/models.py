@@ -74,13 +74,14 @@ class ZgloszenieManager(models.Manager):
     def create_zgloszenie(self, type_id, geom, desc, img, user_id):
         print(type_id)
         print(user_id)
-        #type = Type.objects.get(id=type_id)
-        type = type_id
+        type = Type.objects.get(id=type_id)
+        #type = type_id
+        user = User.object.get(id=user_id)
         zgl = self.create(geometry=geom)
         zgl.type = type
         zgl.desc = desc
         zgl.img = img
-        zgl.user_id = user_id
+        zgl.user = user
         return zgl
 
 

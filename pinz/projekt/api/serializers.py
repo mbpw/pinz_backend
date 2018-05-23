@@ -97,7 +97,7 @@ class ZgloszenieSerializer(GeoFeatureModelSerializer):
         else:
             img = ""
 
-        zgl = Zgloszenie.objects.create_zgloszenie(validated_data['type'], validated_data['geometry'], desc, img, validated_data['user_id'])
+        zgl = Zgloszenie.objects.create_zgloszenie(validated_data['type_id'], validated_data['geometry'], desc, img, validated_data['user'])
         return zgl
 
 
