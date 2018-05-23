@@ -12,16 +12,6 @@ from django.core.serializers import serialize
 
 # Create your views here.
 
-class DzielniceList(APIView):
-
-    def get(self, request):
-        dzielnice = Dzielnica.objects.all()
-        serializer = DzielnicaSerializer(dzielnice, many=True)
-        return Response(serializer.data)
-
-    def post(self):
-
-        pass
 
 class ZgloszeniaList(APIView):
 

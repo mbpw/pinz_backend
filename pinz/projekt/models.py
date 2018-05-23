@@ -7,6 +7,8 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.gis.geos import Point
 from django.contrib.gis.geos import Polygon
 
+from .validators import *
+
 # Create your models here.
 
 warszawaPolygon = Polygon(((21.170654296875, 52.07275365395317),
@@ -16,12 +18,8 @@ warszawaPolygon = Polygon(((21.170654296875, 52.07275365395317),
                           (21.170654296875, 52.07275365395317)))
 
 class User(AbstractUser):
-    # email = models.CharField(max_length=100)
-    # plec = models.CharField(max_length=1)
-    #
-    # REQUIRED_FIELDS = ['email']
-    # EMAIL_FIELD = 'email'
-    img = models.FileField()
+    points = models.IntegerField(default=0)
+    img = models.FileField(default="")
 
     class Meta:
         verbose_name = "Użytkownik"
@@ -40,31 +38,20 @@ class Dzielnica(models.Model):
     def __unicode__(self):
         return 0
 
-def get_image_folder_zgl(instance, filename):
-    path = "media/images/zgloszenia/"
-    print(filename)
-    ext = str(os.path.splitext(filename)[1])
-    files = str(instance.id) + ext
-    return os.path.join(path, files)
-
-def validate_file_extension(value):
-    import os
-    from django.core.exceptions import ValidationError
-    ext = os.path.splitext(value.name)[1]  # [0] returns path+filename
-    valid_extensions = ['.jpeg', '.jpg', '.png']
-    if not ext.lower() in valid_extensions:
-        raise ValidationError(u'Unsupported file extension.')
-
-
-class Zgloszenie(models.Model):
+class Category(models.Model):
     id = models.AutoField(primary_key=True)
-    type = models.ForeignKey(to='Type', on_delete=models.PROTECT)
-    geometry = models.PointField(srid=4326, default=Point(21.010725, 52.220428))
-    img = models.FileField(upload_to=get_image_folder_zgl, validators=[validate_file_extension])
+    catName = models.CharField(max_length=50)
+    icon = models.CharField(max_length=30)
 
     class Meta:
-        verbose_name = "Zgłoszenie"
-        verbose_name_plural = "Zgłoszenia"
+        verbose_name = "Kategoria typu zgłoszenia"
+        verbose_name_plural = "Kategorie typów zgłoszeń"
+
+    def __str__(self):
+        return self.catName
+
+    def __unicode__(self):
+        return str(self.catName)
 
 
 class Type(models.Model):
@@ -83,17 +70,26 @@ class Type(models.Model):
         return str(self.typeName)
 
 
-class Category(models.Model):
+class ZgloszenieManager(models.Manager):
+    def create_zgloszenie(self, type_id, geom, desc, img):
+        type = Type.objects.get(id=type_id)
+        zgl = self.create(geometry=geom)
+        zgl.type = type
+        zgl.desc = desc
+        zgl.img = img
+        return zgl
+
+
+class Zgloszenie(models.Model):
     id = models.AutoField(primary_key=True)
-    catName = models.CharField(max_length=50)
-    icon = models.CharField(max_length=30)
+    user_id = models.ForeignKey('User', null=False, related_name="user_id", on_delete=models.CASCADE)
+    type = models.ForeignKey('Type', null=True, related_name="type", on_delete=models.PROTECT)
+    desc = models.CharField(max_length=255, default="")
+    geometry = models.PointField(srid=4326, default=Point(21.010725, 52.220428))
+    img = models.FileField(upload_to=get_image_folder_zgl, null=True, validators=[validate_file_extension])
+
+    objects = ZgloszenieManager()
 
     class Meta:
-        verbose_name = "Kategoria typu zgłoszenia"
-        verbose_name_plural = "Kategorie typów zgłoszeń"
-
-    def __str__(self):
-        return self.catName
-
-    def __unicode__(self):
-        return str(self.catName)
+        verbose_name = "Zgłoszenie"
+        verbose_name_plural = "Zgłoszenia"
