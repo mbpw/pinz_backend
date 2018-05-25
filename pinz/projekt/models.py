@@ -59,6 +59,7 @@ class Type(models.Model):
     typeName = models.CharField(max_length=100)
     category = models.ForeignKey(to='Category', on_delete=models.PROTECT)
 
+
     class Meta:
         verbose_name = "Typ zgłoszenia"
         verbose_name_plural = "Typy zgłoszeń"
@@ -74,20 +75,21 @@ class ZgloszenieManager(models.Manager):
     def create_zgloszenie(self, type_id, geom, desc, img, user_id):
         print(type_id)
         print(user_id)
-        type = Type.objects.get(id=type_id)
+        #type = Type.objects.get(id=type_id)
         #type = type_id
-        user = User.object.get(id=user_id)
-        zgl = self.create(geometry=geom)
-        zgl.type = type
+        #user = User.objects.get(id=user_id)
+        #user = user_id
+        zgl = self.create(geometry=geom, type=type_id, user=user_id)
+        #zgl.type = type
         zgl.desc = desc
         zgl.img = img
-        zgl.user = user
+        #zgl.user = user
         return zgl
 
 
 class Zgloszenie(models.Model):
     id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey('User', null=False, related_name="user_id", on_delete=models.CASCADE)
+    user = models.ForeignKey('User', null=False, related_name="user_id", on_delete=models.CASCADE)
     type = models.ForeignKey('Type', null=True, related_name="type", on_delete=models.PROTECT)
     desc = models.CharField(max_length=255, default="")
     geometry = models.PointField(srid=4326, default=Point(21.010725, 52.220428))
