@@ -41,7 +41,7 @@ class Dzielnica(models.Model):
 class Category(models.Model):
     id = models.AutoField(primary_key=True)
     catName = models.CharField(max_length=50)
-    icon = models.CharField(max_length=30)
+    icon = models.FileField(blank=True, null=True, upload_to=get_image_folder_cat, validators=[validate_file_extension])
 
     class Meta:
         verbose_name = "Kategoria typu zgłoszenia"
@@ -75,15 +75,10 @@ class ZgloszenieManager(models.Manager):
     def create_zgloszenie(self, type_id, geom, desc, img, user_id):
         print(type_id)
         print(user_id)
-        #type = Type.objects.get(id=type_id)
-        #type = type_id
-        #user = User.objects.get(id=user_id)
-        #user = user_id
         zgl = self.create(geometry=geom, type=type_id, user=user_id)
-        #zgl.type = type
         zgl.desc = desc
         zgl.img = img
-        #zgl.user = user
+        zgl.save()
         return zgl
 
 

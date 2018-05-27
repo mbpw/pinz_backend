@@ -67,31 +67,65 @@ class DzielnicaSerializer(serializers.ModelSerializer):
         fields = ('gid', 'name')
 
 
-class ZgloszenieSerializer(GeoFeatureModelSerializer):
-    dzielnica = serializers.SerializerMethodField('getDzielnica')
+class ZgloszenieListSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Zgloszenie
+
+
+class ZgloszenieGeoSerializer(GeoFeatureModelSerializer):
+    dzielnica = serializers.SerializerMethodField(method_name='getDzielnica')
+
+    class Meta:
+        model = Zgloszenie
+        geo_field = "geometry"
+        depth = 2
+        fields = ('type','desc','geometry','dzielnica')
 
     def getDzielnica(self, zgl):
-        sql = Dzielnica.objects.raw("SELECT dz.gid, dz.name FROM projekt_dzielnica dz, projekt_zgloszenie zg WHERE ST_Contains(dz.geometry, zg.geometry) AND zg.id="+str(zgl.id)+";")
+        sql = Dzielnica.objects.raw(
+            "SELECT dz.gid, dz.name FROM projekt_dzielnica dz, projekt_zgloszenie zg WHERE ST_Contains(dz.geometry, zg.geometry) AND zg.id=" + str(
+                zgl.id) + ";")
         print(list(sql))
         if list(sql):
             return sql[0].name
         else:
             return "PUNKT NIE ZNAJDUJE SIĘ W WARSZAWIE"
 
+
+class ZgloszenieSerializer(serializers.ModelSerializer):
+    #type = serializers.IntegerField
+    dzielnica = serializers.SerializerMethodField(method_name='getDzielnica')
+    geometry = serializers.CharField(allow_null=False)
+
     class Meta:
         model = Zgloszenie
         geo_field = "geometry"
         fields = ('__all__')
 
+    def getDzielnica(self, zgl):
+        sql = Dzielnica.objects.raw(
+            "SELECT dz.gid, dz.name FROM projekt_dzielnica dz, projekt_zgloszenie zg WHERE ST_Contains(dz.geometry, zg.geometry) AND zg.id=" + str(
+                zgl.id) + ";")
+        print(list(sql))
+        if list(sql):
+            return sql[0].name
+        else:
+            return "PUNKT NIE ZNAJDUJE SIĘ W WARSZAWIE"
+
     def create(self, validated_data):
 
         print(validated_data)
 
-        # Description
-        if 'desc' in validated_data:
-            desc = validated_data['desc']
-        else:
-            desc = ""
+
+        desc = validated_data.get('desc')
+
+
+        # # Description
+        # if 'desc' in validated_data:
+        #     desc = validated_data['desc']
+        # else:
+        #     desc = ""
 
         # Image
         if 'img' in validated_data:
@@ -100,25 +134,20 @@ class ZgloszenieSerializer(GeoFeatureModelSerializer):
             img = ""
 
         zgl = Zgloszenie.objects.create_zgloszenie(validated_data['type'], validated_data['geometry'], desc, img, validated_data['user'])
+
         return zgl
 
 
 class TypeSerializer(serializers.ModelSerializer):
-    #id = serializers.PrimaryKeyRelatedField(read_only=True, queryset=Type)
-    type_name = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Type
-        #depth = 1
+        depth = 1
         fields = ('__all__')
-
-    def get_type_name(self, obj):
-        type_name = serializers.SerializerMethodField(read_only=True)
-        return type_name
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    nazwaa = serializers.PrimaryKeyRelatedField(read_only=True)
+    nazwa = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
         model = Category
-        fields = ('nazwaa')
+        fields = ('nazwa')
