@@ -7,6 +7,13 @@ def get_image_folder_zgl(instance, filename):
     files = str(instance.id) + ext
     return os.path.join(path, files)
 
+def get_image_folder_cat(instance, filename):
+    path = "media/images/kategorie/"
+    print(filename)
+    ext = str(os.path.splitext(filename)[1])
+    files = str(instance.id) + ext
+    return os.path.join(path, files)
+
 def get_file_name(value):
     tab = value.split('/')
     return tab[-1]
