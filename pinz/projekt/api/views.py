@@ -15,6 +15,10 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.permissions import IsAuthenticated
 
 
+#
+# Użytkownik
+#
+
 class UserDetailView(generics.RetrieveAPIView):
     lookup_field = 'id'
     serializer_class = UserSerializer
@@ -38,12 +42,47 @@ class UserRegisterView(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
+#
+# Zgłoszenie
+#
+
+
 class ZgloszenieAddView(generics.CreateAPIView):
     serializer_class = ZgloszenieSerializer
-    #permission_classes = (IsAuthenticated)
+    permission_classes = IsAuthenticated
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
+
+class ZgloszeniaList(APIView):
+    serializer_class = ZgloszenieSerializer(many=True)
+
+    def get(self, request):
+        zgloszenia = Zgloszenie.objects.all()
+        serializer = ZgloszenieSerializer(zgloszenia, many=True)
+        return Response(serializer.data)
+
+    def post(self):
+        pass
+
+
+class ZgloszenieByID(APIView):
+
+    def get(self, request):
+        params = request.query_params
+
+        if params is not None:
+            print(params['id'])
+        # data =
+
+        return Response()
+
+
+#
+# Dzielnica
+#
+
 
 class DzielniceListView(APIView):
     permission_classes = ()
