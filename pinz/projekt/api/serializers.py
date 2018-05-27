@@ -8,8 +8,6 @@ from projekt.models import Zgloszenie
 from projekt.models import Type
 from projekt.models import Category
 
-from django.contrib.gis.geos import Point
-from django.contrib.gis.geos import Polygon
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(min_length=8, required=True, write_only=True)
@@ -60,6 +58,7 @@ class UserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("This email has already been used")
         return value
 
+
 class DzielnicaSerializer(serializers.ModelSerializer):
 
     #lat = serializers.
@@ -70,25 +69,23 @@ class DzielnicaSerializer(serializers.ModelSerializer):
 
 class ZgloszenieSerializer(GeoFeatureModelSerializer):
     dzielnica = serializers.SerializerMethodField('getDzielnica')
-    type = serializers.StringRelatedField(read_only=True)
 
     def getDzielnica(self, zgl):
-        sql = Dzielnica.objects.raw("SELECT ar.gid, ar.name FROM projekt_dzielnica ar, projekt_zgloszenie pl WHERE ST_Contains(ar.geometry, pl.geometry) AND pl.id="+str(zgl.id)+";")
-        return sql[0].name
+        sql = Dzielnica.objects.raw("SELECT dz.gid, dz.name FROM projekt_dzielnica dz, projekt_zgloszenie zg WHERE ST_Contains(dz.geometry, zg.geometry) AND zg.id="+str(zgl.id)+";")
+        print(list(sql))
+        if list(sql):
+            return sql[0].name
+        else:
+            return "PUNKT NIE ZNAJDUJE SIĘ W WARSZAWIE"
 
     class Meta:
         model = Zgloszenie
         geo_field = "geometry"
-       # depth = 1
         fields = ('__all__')
 
-    #{"type": "Point", "coordinates": [21.010725, 52.220428]}
-
     def create(self, validated_data):
-        if 'type' in validated_data:
-            type = validated_data['type']
-        else:
-            type = 1
+
+        print(validated_data)
 
         # Description
         if 'desc' in validated_data:
@@ -102,21 +99,22 @@ class ZgloszenieSerializer(GeoFeatureModelSerializer):
         else:
             img = ""
 
-        if 'user' in validated_data:
-            user = validated_data['user']
-        else:
-            user = 2
-
-        zgl = Zgloszenie.objects.create_zgloszenie(type, validated_data['geometry'], desc, img, user)
+        zgl = Zgloszenie.objects.create_zgloszenie(validated_data['type'], validated_data['geometry'], desc, img, validated_data['user'])
         return zgl
 
 
 class TypeSerializer(serializers.ModelSerializer):
     #id = serializers.PrimaryKeyRelatedField(read_only=True, queryset=Type)
+    type_name = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Type
         #depth = 1
         fields = ('__all__')
+
+    def get_type_name(self, obj):
+        type_name = serializers.SerializerMethodField(read_only=True)
+        return type_name
 
 
 class CategorySerializer(serializers.ModelSerializer):

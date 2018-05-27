@@ -13,26 +13,3 @@ from django.core.serializers import serialize
 # Create your views here.
 
 
-class ZgloszeniaList(APIView):
-
-    def get(self, request):
-        zgloszenia = Zgloszenie.objects.all()
-        serializer = ZgloszenieSerializer(zgloszenia, many=True)
-        return Response(serializer.data)
-        #data = serialize('geojson', Zgloszenie.objects.all(), geometry_field='geometry')
-        #return Response(data)
-
-    def post(self):
-        pass
-
-class ZgloszenieByID(APIView):
-
-    def get(self, request):
-
-        params = request.query_params
-
-        if params is not None:
-            print(params['id'])
-           # data =
-
-        return Response()

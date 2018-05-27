@@ -28,6 +28,7 @@ class DzielnicaAdmin(WarsawOSMGeoAdmin):
 
 
 class ZgloszenieAdmin(WarsawOSMGeoAdmin):
+    list_display = ('id','type','desc')
     pass
 
 
