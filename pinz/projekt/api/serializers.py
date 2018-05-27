@@ -85,6 +85,11 @@ class ZgloszenieSerializer(GeoFeatureModelSerializer):
     #{"type": "Point", "coordinates": [21.010725, 52.220428]}
 
     def create(self, validated_data):
+        if 'type' in validated_data:
+            type = validated_data['type']
+        else:
+            type = 1
+
         # Description
         if 'desc' in validated_data:
             desc = validated_data['desc']
@@ -97,7 +102,12 @@ class ZgloszenieSerializer(GeoFeatureModelSerializer):
         else:
             img = ""
 
-        zgl = Zgloszenie.objects.create_zgloszenie(validated_data['type'], validated_data['geometry'], desc, img, validated_data['user_id'])
+        if 'user' in validated_data:
+            user = validated_data['user']
+        else:
+            user = 2
+
+        zgl = Zgloszenie.objects.create_zgloszenie(type, validated_data['geometry'], desc, img, user)
         return zgl
 
 

@@ -74,19 +74,20 @@ class ZgloszenieManager(models.Manager):
     def create_zgloszenie(self, type_id, geom, desc, img, user_id):
         print(type_id)
         print(user_id)
-        #type = Type.objects.get(id=type_id)
-        type = type_id
+        type = Type.objects.get(id=type_id)
+        #type = type_id
+        #user = User.objects.get(id=user_id)
         zgl = self.create(geometry=geom)
-        zgl.type = type
+        zgl.type = type_id
         zgl.desc = desc
         zgl.img = img
-        zgl.user_id = user_id
+        zgl.user = user_id
         return zgl
 
 
 class Zgloszenie(models.Model):
     id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey('User', null=False, related_name="user_id", on_delete=models.CASCADE)
+    user = models.ForeignKey('User', null=True, related_name="user", on_delete=models.CASCADE)
     type = models.ForeignKey('Type', null=True, related_name="type", on_delete=models.PROTECT)
     desc = models.CharField(max_length=255, default="")
     geometry = models.PointField(srid=4326, default=Point(21.010725, 52.220428))
