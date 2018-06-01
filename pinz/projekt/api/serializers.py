@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from rest_framework_gis.serializers import GeoFeatureModelSerializer, GeometrySerializerMethodField
 from rest_framework.validators import UniqueValidator
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
 
 from projekt.models import User
 from projekt.models import Dzielnica
@@ -8,6 +10,20 @@ from projekt.models import Zgloszenie
 from projekt.models import Type
 from projekt.models import Category
 
+class FileUrlField(serializers.FileField):
+    def to_internal_value(self, data):
+        try:
+            URLValidator()(data)
+        except ValidationError as e:
+            raise ValidationError('invalid Url')
+
+
+class CatIconSerializer(serializers.ModelSerializer):
+    icon = FileUrlField
+
+    class Meta:
+        model = Category
+        fields = ['icon']
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(min_length=8, required=True, write_only=True)

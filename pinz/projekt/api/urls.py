@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^zgloszenia/find/$', ZgloszenieByAttributes.as_view(), name='api-zgloszenia-find'),
 
     url(r'^types/list/$', TypeListView.as_view(), name='api-types-list'),
+    url(r'^cats/icons/$', CatIconView.as_view(), name='api-cats-icons'),
 
     url(r'^dzielnice/list/$', DzielniceListView.as_view(), name='api-dzielnice-list')
 

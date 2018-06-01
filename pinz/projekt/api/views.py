@@ -10,11 +10,12 @@ from projekt.models import User
 from projekt.models import Zgloszenie
 from projekt.models import Dzielnica
 from projekt.models import Type
+from projekt.models import Category
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from .permissions import IsAdminOrCurrUser
-from .serializers import UserSerializer
+from .serializers import UserSerializer, CatIconSerializer
 from .serializers import ZgloszenieSerializer
 from .serializers import ZgloszenieGeoSerializer
 from .serializers import DzielnicaSerializer
@@ -201,3 +202,10 @@ class TypeListView(generics.ListAPIView):
     serializer_class = TypeSerializer
     lookup_field = 'id'
     permission_classes = ()
+
+
+class CatIconView(generics.ListAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CatIconSerializer
+    permission_classes = ()
+    pass

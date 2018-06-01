@@ -1,14 +1,14 @@
 import os
 
 def get_image_folder_zgl(instance, filename):
-    path = "media/images/zgloszenia/"
+    path = "images/zgloszenia/"
     print(filename)
     ext = str(os.path.splitext(filename)[1])
     files = str(instance.id) + ext
     return os.path.join(path, files)
 
 def get_image_folder_cat(instance, filename):
-    path = "media/images/kategorie/"
+    path = "images/kategorie/"
     print(filename)
     ext = str(os.path.splitext(filename)[1])
     files = str(instance.id) + ext

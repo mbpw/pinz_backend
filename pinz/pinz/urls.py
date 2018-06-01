@@ -21,6 +21,8 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 
 from projekt import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -32,4 +34,4 @@ urlpatterns = [
     #eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6IndlenlyIiwiZXhwIjoxNTI2OTE3MDM3LCJlbWFpbCI6ImVAbWFpbC5jb20ifQ.5viCK9aZiXGro0kJlXhcU6hZFpKrSpWzHrLWN9ZU1RA
     # url(r'^dzielnice/', views.DzielniceList.as_view()),
     # url(r'^zgloszenie/$', views.ZgloszenieByID.as_view()),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
