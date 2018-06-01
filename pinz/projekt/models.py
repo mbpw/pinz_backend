@@ -88,8 +88,9 @@ class Zgloszenie(models.Model):
     type = models.ForeignKey('Type', null=True, related_name="type", on_delete=models.PROTECT)
     desc = models.CharField(max_length=255, default="")
     geometry = models.PointField(srid=4326, default=Point(21.010725, 52.220428))
-    img = models.FileField(upload_to=get_image_folder_zgl, null=True, validators=[validate_file_extension])
-
+    img = models.FileField(upload_to=get_image_folder_zgl, blank=True, null=True, validators=[validate_file_extension])
+    timestamp = models.DateTimeField(auto_now=True)
+    fixed = models.BooleanField(default=False)
     objects = ZgloszenieManager()
 
     class Meta:

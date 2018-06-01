@@ -19,10 +19,10 @@ urlpatterns = [
     url(r'^user/refresh', refresh_jwt_token, name="api-refresh-token"),
 
     url(r'^zgloszenia/add/$', ZgloszenieAddView.as_view(), name='api-zgloszenia-add'),
-    url(r'^zgloszenia/list/$', ZgloszeniaList.as_view(), name='api-zgloszenia-list'),
+    url(r'^zgloszenia/list/$', ZgloszenieList.as_view(), name='api-zgloszenia-list'),
+    url(r'^zgloszenia/find/$', ZgloszenieByAttributes.as_view(), name='api-zgloszenia-find'),
 
-    url(r'^types/list/$', TypeListView.as_view(), name='api-zgloszenia-list'),
-
+    url(r'^types/list/$', TypeListView.as_view(), name='api-types-list'),
 
     url(r'^dzielnice/list/$', DzielniceListView.as_view(), name='api-dzielnice-list')
 
